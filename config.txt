@@ -1,0 +1,106 @@
+#This is the configuration file to run the pipeline prokfold
+
+
+
+### Genome File ###
+
+genome fna: pathTo/genome.fna
+genome gff3: pathTo/genome.gff3
+
+
+
+### ReadsFile ###
+  
+#Type the absolute path of the directory which contain the reads
+reads commonPath:	pathTo/readFile
+
+#If your sample are single-end type "True", if your sample are pair-end type "False" (case of letters' word is not important)
+reads singleEnd: true
+
+#For each sample that you want to include in the run type:
+# sample: name_sample name_group name_file 
+reads sample: name1	group1	name1.fastq
+reads sample: name2	group1	name2.fastq
+reads sample: name3	group1	name3.fastq
+reads sample: name4	group2	name4.fastq
+reads sample: name5	group2	name5.fastq
+reads sample: name6	group2	name6.fastq
+
+
+
+
+
+### AfterQC ###
+
+afterqc trimming front (-f):	-1
+afterqc trimming tail (-t):	-1
+afterqc quality base (-q):		15
+afterqc poly size limit (-p):	35
+afterqc poly mismatch (-a):	2
+afterqc N base limit (-n):		3
+afterqc seq length (-s):		35
+
+
+
+### Bowtie2 ###
+
+bowtie num of align (-k): None	# Positive number if you want use this param unless type "None"
+bowtie number cpu (-p): 1	# Pipeline more efficient if number of cpu given to pipeline is divisible by this number 
+
+
+
+### Deeptools ###
+
+#Type None for no normalisation or type BPM, TPM, RPKM, CPM
+bamCoverage normalize: rpkm
+
+# 0 mean that you don't make filtering with this parameter
+plotCoverage min mapping quality (--minMappingQuality): 0
+
+multiBigwigSummary binSize (-bs): 1000
+
+
+
+### FeatureCounts ###
+
+#list of all feature that you search
+#To have all feature in gff type the command above
+#cut -f 2 directory/genome.gff3 | sort| uniq -c |sort -nr
+featCount feature type (-t): CDS,ncRNA,tRNA,regulatory_region,tmRNA,rRNA,exon
+
+
+### Fadu ###
+
+#list of all feature that you search
+#To have all feature in gff type the command above
+#cut -f 2 directory/genome.gff3 | sort| uniq -c |sort -nr
+fadu feature type (-f): CDS,ncRNA,tRNA,regulatory_region,tmRNA,rRNA,exon
+
+#Remove the reads that are mapped to multiple region of the genome (True or False)
+remove multi-mapped (-M): true
+
+#Keep only properly paired reads (true or false)
+proper pairs (-p): true
+
+#if the fragment size of properly-paired reads exceeds this value, 
+#it will process pair as single reads (in default put 1000)
+max fragment size (-m): 1000
+
+### EdgeR ###
+
+# You can choose between "TMM","RLE","upperquartile","none"
+normalization method (-n):	TMM
+
+# Minimum number of count for a feature in one sample to validate the test
+minimum count per sample (-c):	4
+
+# Minimum number of sample which need to validate the "minimum count per sample"
+# you can use a number (example: 3) or a percentage (example: 0.4)
+# We advice to don't exceed the number of sample in group with the less sample
+# The percentage will round up in function of the number of sample
+minimum number of sample (-s):	0.375
+
+# Number of feature selected with highest Fold Change
+top Fold Change heatmap(-t):	30
+
+
